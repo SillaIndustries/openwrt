@@ -123,6 +123,7 @@ platform_check_image() {
 	pbr-d1|\
 	pbr-m1|\
 	phicomm,k2g|\
+	prism|\
 	psg1208|\
 	psg1218a|\
 	psg1218b|\
