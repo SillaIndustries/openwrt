@@ -1,0 +1,13 @@
+--- a/drivers/rtc/rtc-ds1307.c
++++ b/drivers/rtc/rtc-ds1307.c
+@@ -1552,6 +1552,10 @@
+ 	case m41t0:
+ 	case m41t00:
+ 		/* clock halted?  turn it on, so clock can tick. */
++		if (tmp == 0xff) {
++			dev_warn(ds1307->dev, "CLOCK BROKEN?\n");
++			goto exit;
++		}
+ 		if (tmp & DS1307_BIT_CH) {
+ 			regmap_write(ds1307->regmap, DS1307_REG_SECS, 0);
+ 			dev_warn(ds1307->dev, "SET TIME!\n");
