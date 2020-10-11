@@ -12,6 +12,20 @@ out "Starting FULL build process using $cpus processes"
 
 ##############################################################################
 
+if [ ! -e "key-build" ]
+then
+  if [ -e "../prism-build-key-v1" ]
+  then
+    out "Using '../prism-build-key-v1' as 'key-build'"
+    cp ../prism-build-key-v1 key-build
+    cp ../prism-build-key-v1.pub key-build.pub
+  else
+    out " !!! WARNING !!! No 'key-build', signed packages won't be official!"
+  fi
+fi
+
+##############################################################################
+
 out "1/5) Updating feeds"
 ./scripts/feeds update
 
