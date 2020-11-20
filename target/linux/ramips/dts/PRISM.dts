@@ -73,6 +73,24 @@
 			gpios = <&gpio1 7 GPIO_ACTIVE_LOW>;
 			linux,code = <BTN_1>;
 		};
+
+		SW_0 {
+			label = "SW_0";
+			gpios = <&gpio0 16 GPIO_ACTIVE_LOW>;
+			linux,code = <BTN_2>;
+		};
+
+		SW_1 {
+			label = "SW_1";
+			gpios = <&gpio0 15 GPIO_ACTIVE_LOW>;
+			linux,code = <BTN_3>;
+		};
+
+		SW_2 {
+			label = "SW_2";
+			gpios = <&gpio0 14 GPIO_ACTIVE_LOW>;
+			linux,code = <BTN_4>;
+		};
 	};
 };
 
