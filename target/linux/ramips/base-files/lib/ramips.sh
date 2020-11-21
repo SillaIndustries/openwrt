@@ -391,6 +391,9 @@ ramips_board_detect() {
 	*"PBR-M1")
 		name="pbr-m1"
 		;;
+	*"Cartender PRISM")
+		name="prism"
+		;;
 	*"PSG1208")
 		name="psg1208"
 		;;
