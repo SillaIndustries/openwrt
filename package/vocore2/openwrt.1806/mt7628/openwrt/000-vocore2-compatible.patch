@@ -1,0 +1,71 @@
+--- /dev/null
++++ b/target/linux/ramips/patches-4.14/801-mt7628-kernel-wext-oldapi.patch
+@@ -0,0 +1,13 @@
++diff -Naru a/net/wireless/wext-core.c b/net/wireless/wext-core.c
++--- a/net/wireless/wext-core.c	
+++++ b/net/wireless/wext-core.c
++@@ -956,6 +956,9 @@
++ 		else if (private)
++ 			return private(dev, iwr, cmd, info, handler);
++ 	}
+++	/* Old driver API : call driver ioctl handler */
+++	if (dev->netdev_ops->ndo_do_ioctl)
+++		return dev->netdev_ops->ndo_do_ioctl(dev, (struct ifreq *)iwr, cmd);
++ 	return -EOPNOTSUPP;
++ }
++ 
+--- /dev/null
++++ b/target/linux/ramips/patches-4.14/0306-spi-flash-factory-id.patch
+@@ -0,0 +1,29 @@
++--- a/drivers/mtd/devices/m25p80.c
+++++ b/drivers/mtd/devices/m25p80.c 
++@@ -27,6 +27,18 @@
++ #include <linux/spi/flash.h>
++ #include <linux/mtd/spi-nor.h>
++ 
+++static ssize_t m25p80_fid(struct device *dev, struct device_attribute *attr, char *buf)
+++{
+++	struct spi_device *spi = to_spi_device(dev);
+++	u8 code[5] = {0}, fid[8];
+++
+++	code[0] = 0x4b;
+++	if (spi_write_then_read(spi, &code, 5, fid, 8) < 0)
+++		return sprintf(buf, "\n");
+++	return sprintf(buf, "%08X%08X\n", ((u32 *)fid)[0], ((u32 *)fid)[1]);
+++}
+++static DEVICE_ATTR(fid, S_IRUGO, m25p80_fid, NULL);
+++
++ #define	MAX_CMD_SIZE		6
++ struct m25p {
++ 	struct spi_device	*spi;
++@@ -298,6 +309,7 @@
++ 	if (ret)
++ 		return ret;
++ 
+++	device_create_file(&spi->dev, &dev_attr_fid);
++ 	return mtd_device_register(&nor->mtd, data ? data->parts : NULL,
++ 				   data ? data->nr_parts : 0);
++ }
+--- /dev/null
++++ b/target/linux/ramips/patches-4.14/882-pinctrl-fix-refclk-name.patch
+@@ -0,0 +1,20 @@
++--- a/arch/mips/ralink/mt7620.c
+++++ b/arch/mips/ralink/mt7620.c
++@@ -187,7 +187,7 @@
++ 
++ static struct rt2880_pmx_func gpio_grp_mt7628[] = {
++ 	FUNC("pcie", 3, 11, 1),
++-	FUNC("refclk", 2, 11, 1),
+++	FUNC("gpio refclk", 2, 11, 1),
++ 	FUNC("gpio", 1, 11, 1),
++ 	FUNC("gpio", 0, 11, 1),
++ };
++@@ -331,7 +331,7 @@
++ 				1, MT7628_GPIO_MODE_CS1),
++ 	GRP_G("spis", spis_grp_mt7628, MT7628_GPIO_MODE_MASK,
++ 				1, MT7628_GPIO_MODE_SPIS),
++-	GRP_G("gpio", gpio_grp_mt7628, MT7628_GPIO_MODE_MASK,
+++	GRP_G("gpio0", gpio_grp_mt7628, MT7628_GPIO_MODE_MASK,
++ 				1, MT7628_GPIO_MODE_GPIO),
++ 	GRP_G("wled_an", wled_an_grp_mt7628, MT7628_GPIO_MODE_MASK,
++ 				1, MT7628_GPIO_MODE_WLED_AN),
