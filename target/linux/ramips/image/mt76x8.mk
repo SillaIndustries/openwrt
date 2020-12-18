@@ -160,6 +160,15 @@ define Device/omega2p
 endef
 TARGET_DEVICES += omega2p
 
+define Device/prism
+  DTS := PRISM
+  IMAGE_SIZE := $(ralink_default_fw_size_32M)
+  SUPPORTED_DEVICES := prism
+  DEVICE_TITLE := Cartender Prism
+  DEVICE_PACKAGES:= kmod-usb2 kmod-usb-ohci uboot-envtools
+endef
+TARGET_DEVICES += prism
+
 define Device/pbr-d1
   DTS := PBR-D1
   IMAGE_SIZE := $(ralink_default_fw_size_16M)
