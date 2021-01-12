@@ -147,6 +147,10 @@ define Package/base-files/install
 		$(1)/etc/device_info \
 		$(1)/usr/lib/os-release
 
+	$(VERSION_SED_SCRIPT) \
+		$(1)/etc/prism/version \
+		$(1)/root/config/version
+
 	$(SED) "s#%PATH%#$(TARGET_INIT_PATH)#g" \
 		$(1)/sbin/hotplug-call \
 		$(1)/etc/preinit \
