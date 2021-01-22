@@ -1,5 +1,5 @@
-src-git packages https://github.com/cartender/openwrt_packages.git^prism-1.5a
+src-git packages https://github.com/cartender/openwrt_packages.git^prism-1.5b
 src-git luci https://git.openwrt.org/project/luci.git^ab22243b4928bd81936f56422970c10192cdad8e
 src-git routing https://git.openwrt.org/feed/routing.git^83f515d7ae76e5a7460c0eacadae806363df05a1
 src-git telephony https://git.openwrt.org/feed/telephony.git^8ecbdabc7c5cadbe571eb947f5cd333a5a785010
-src-git prism https://github.com/cartender/prism_openwrt_packages.git^prism-1.5a
+src-git prism https://github.com/cartender/prism_openwrt_packages.git^prism-1.5b
