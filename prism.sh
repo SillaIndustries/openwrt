@@ -69,8 +69,8 @@ fi
 
 if [ "$ACTION" = "feeds update" -o "$ACTION" = "feeds" -o "$ACTION" = "full build" ]
 then
-	out "1/5) Updating feeds"
-	./scripts/feeds update
+  out "1/5) Updating feeds"
+  ./scripts/feeds update
 fi
 
 # At this point, out feed must exist
@@ -80,26 +80,26 @@ fi
 
 if [ "$ACTION" = "feeds files" -o "$ACTION" = "feeds" -o "$ACTION" = "full build" ]
 then
-	_FILES_REPO_URL=$(cat feeds/prism/prism/prism-files/REPO_URL)
-	_FILES_REPO_VERSION=$(cat feeds/prism/prism/prism-files/REPO_VERSION)
-	_FILES_LOCAL_REPO="files-repo"
+  _FILES_REPO_URL=$(cat feeds/prism/prism/prism-files/REPO_URL)
+  _FILES_REPO_VERSION=$(cat feeds/prism/prism/prism-files/REPO_VERSION)
+  _FILES_LOCAL_REPO="files-repo"
 
-	if [ -e "files" ]
-	then
-		out "Skipping 'files' directory creation (already existing)"
-	else
-		if [ ! -e "$_FILES_LOCAL_REPO" ]
-		then
-			out "Cloning files repository from $_FILES_REPO_URL"
-			git clone "$_FILES_REPO_URL" "$_FILES_LOCAL_REPO"
-		else
+  if [ -e "files" ]
+  then
+    out "Skipping 'files' directory creation (already existing)"
+  else
+    if [ ! -e "$_FILES_LOCAL_REPO" ]
+    then
+      out "Cloning files repository from $_FILES_REPO_URL"
+      git clone "$_FILES_REPO_URL" "$_FILES_LOCAL_REPO"
+    else
       (cd "$_FILES_LOCAL_REPO" && git fetch origin)
     fi
 
-		out "Checking out files repository version $_FILES_REPO_VERSION and symlinking to 'files'"
-		(cd "$_FILES_LOCAL_REPO" && git checkout "$_FILES_REPO_VERSION")
-		ln -s "$_FILES_LOCAL_REPO/prism-files" files
-	fi
+    out "Checking out files repository version $_FILES_REPO_VERSION and symlinking to 'files'"
+    (cd "$_FILES_LOCAL_REPO" && git checkout "$_FILES_REPO_VERSION")
+    ln -s "$_FILES_LOCAL_REPO/prism-files" files
+  fi
 fi
 
 # At this point, the files folder must exist
