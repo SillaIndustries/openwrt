@@ -1,0 +1,38 @@
+From 307e4a675b47a09baa9ae5361b8b91c773ad7c61 Mon Sep 17 00:00:00 2001
+From: Giovanni Giacobbi <giovanni@giacobbi.net>
+Date: Sat, 30 Jan 2021 13:10:08 +0000
+Subject: [PATCH urngd] Fix busy loop in case of ioctl(RNDADDENTROPY) failure
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On systems where adding entropy to /dev/random using ioctl(RNDADDENTROPY) is not allowed (notably: docker containers), avoid entering a busy loop that consumes high cpu, as the poll loop will keep firing.
+
+Cc: Petr Štetiar <ynezz@true.cz>
+---
+ urngd.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/urngd.c b/urngd.c
+index 35ccdec..410d300 100644
+--- a/urngd.c
++++ b/urngd.c
+@@ -129,9 +129,14 @@ static size_t gather_entropy(struct urngd *u)
+ static void low_entropy_cb(struct uloop_fd *ufd, unsigned int events)
+ {
+ 	struct urngd *u = container_of(ufd, struct urngd, rnd_fd);
++	size_t res;
+ 
+ 	DEBUG(2, DEV_RANDOM " signals low entropy\n");
+-	gather_entropy(u);
++	res = gather_entropy(u);
++	if (!res) {
++		DEBUG(2, "gather_entropy failed, delaying further attempts\n");
++		sleep(60);
++	}
+ }
+ 
+ static void urngd_done(struct urngd *u)
+-- 
+Giovanni Giacobbi
+
