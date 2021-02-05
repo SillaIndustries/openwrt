@@ -6,7 +6,7 @@
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
 
-/{
+/ {
 	compatible = "prism", "mediatek,mt7628an-soc";
 	model = "PRISM";
 
@@ -54,7 +54,7 @@
 
 	gpio-keys {
 		compatible = "gpio-keys-polled";
-		poll-interval = <20>;
+		poll-interval = <100>;
 
 		//reset {
 		//	label = "reset";
@@ -240,6 +240,11 @@
 		compatible = "maxim,ds1307";
 		reg = <0x68>;
 		status = "okay";
+	};
+
+	atecc508a@c0 {
+		compatible = "atmel,atecc508a";
+		reg = <0xc0>;
 	};
 };
 
