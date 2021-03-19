@@ -44,7 +44,7 @@ fi
 ##############################################################################
 
 BKEY_REFERENCE="../prism-build-key-v1"
-BKEY_PUB="RWTvWnhpt6nreEvB1GaxAgH/wFarbDqtpbhLxyFvZNU3VR1awUdS+vU/"
+BKEY_OFFICIAL_PUB="RWTvWnhpt6nreEvB1GaxAgH/wFarbDqtpbhLxyFvZNU3VR1awUdS+vU/"
 
 if [ ! -e "key-build" ]
 then
@@ -53,12 +53,14 @@ then
     out "Importing '$BKEY_REFERENCE' as 'key-build'"
     cp "$BKEY_REFERENCE" key-build
     cp "$BKEY_REFERENCE.pub" key-build.pub
+    cp "$BKEY_REFERENCE.ucert" key-build.ucert
+    cp "$BKEY_REFERENCE.ucert.revoke" key-build.ucert.revoke
   else
     out " !!! WARNING !!! No 'key-build', generated packages won't be official!"
   fi
 else
   BKEY_ACTUAL_PUB=$(tail -n 1 key-build.pub)
-  if [ "$BKEY_PUB" != "$BKEY_ACTUAL_PUB" ]
+  if [ "$BKEY_OFFICIAL_PUB" != "$BKEY_ACTUAL_PUB" ]
   then
     out " !!! WARNING !!! Wrong 'key-build', generated packages won't be official!"
   fi
@@ -103,7 +105,7 @@ then
 fi
 
 # At this point, the files folder must exist
-[ -e "files/etc/prism/version" ] || err "Missing 'files' version, please run \"feeds files\" next"
+[ -e "files/etc/prism/prismfiles-version" ] || err "Missing 'files' version, please run \"feeds files\" next"
 
 ##############################################################################
 # Installing the feeds creates symlinks under 'package/feeds/<feed>/<packagename>'
@@ -138,11 +140,11 @@ then
 fi
 
 # Verify that the files we have are the ones we expect
-_XCONFIG_VERSION=$(sed -ne 's/^CONFIG_VERSION_NUMBER="\(.*\)"/\1/p' .config)
-_XFILES_VERSION="$(cat files/etc/prism/version)"
-[ "$_XFILES_VERSION" == "$_XCONFIG_VERSION" ] || \
-  err "Local 'files' version (\"$_XFILES_VERSION\")" \
-      "mismatches config version (\"$_XCONFIG_VERSION\")" >&2
+_XCONFIG_VERSION=$(sed -ne 's/^CONFIG_VERSION_NUMBER="\([0-9.]\+\).*"/\1/p' .config)
+_XFILES_VERSION=$(sed -ne 's/^\([0-9.]\+\).*/\1/p' files/etc/prism/prismfiles-version)
+[ "$_XFILES_VERSION" = "$_XCONFIG_VERSION" ] || \
+  err "Local 'files' base version (\"$_XFILES_VERSION\")" \
+      "mismatches config base version (\"$_XCONFIG_VERSION\")" >&2
 
 ##############################################################################
 
