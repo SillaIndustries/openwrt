@@ -31,24 +31,19 @@
 	gpio-leds {
 		compatible = "gpio-leds";
 
-
 		led_power: aaa {
 			label = "prism:green";
-			//GPIO41
-			gpios = <&gpio1 9 GPIO_ACTIVE_LOW>;
+			gpios = <&gpio1 9 GPIO_ACTIVE_LOW>;  // GPIO 41
 		};
 
 		led_upgrade: bbb {
 			label = "prism:red";
-			//GPIO42
-			gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
+			gpios = <&gpio1 10 GPIO_ACTIVE_LOW>; // GPIO 42
 		};
-
 
 		led_whatchdog: ccc {
 			label = "prism:wd";
-			//GPIO40
-			gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
+			gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;  // GPIO 40
 		};
 	};
 
@@ -64,31 +59,31 @@
 
 		BTN_0 {
 			label = "BTN_0";
-			gpios = <&gpio0 19 GPIO_ACTIVE_LOW>;
+			gpios = <&gpio0 19 GPIO_ACTIVE_LOW>; // GPIO 19
 			linux,code = <BTN_0>;
 		};
 
 		BTN_1 {
 			label = "BTN_1";
-			gpios = <&gpio1 7 GPIO_ACTIVE_LOW>;
+			gpios = <&gpio1 7 GPIO_ACTIVE_LOW>;  // GPIO 39
 			linux,code = <BTN_1>;
 		};
 
 		SW_0 {
 			label = "SW_0";
-			gpios = <&gpio0 16 GPIO_ACTIVE_LOW>;
+			gpios = <&gpio0 16 GPIO_ACTIVE_LOW>; // GPIO 16
 			linux,code = <BTN_2>;
 		};
 
 		SW_1 {
 			label = "SW_1";
-			gpios = <&gpio0 15 GPIO_ACTIVE_LOW>;
+			gpios = <&gpio0 15 GPIO_ACTIVE_LOW>; // GPIO 15
 			linux,code = <BTN_3>;
 		};
 
 		SW_2 {
 			label = "SW_2";
-			gpios = <&gpio0 14 GPIO_ACTIVE_LOW>;
+			gpios = <&gpio0 14 GPIO_ACTIVE_LOW>; // GPIO 14
 			linux,code = <BTN_4>;
 		};
 	};
@@ -228,13 +223,13 @@
 	status = "okay";
 };
 
-
 &uart2 {
 	status = "okay";
 };
 
 &i2c {
 	status = "okay";
+	clock-frequency = <100000>;
 
 	ds1307@68 {
 		compatible = "maxim,ds1307";
@@ -244,7 +239,7 @@
 
 	atecc508a@c0 {
 		compatible = "atmel,atecc508a";
-		reg = <0xc0>;
+		reg = <0x60>;
 	};
 };
 

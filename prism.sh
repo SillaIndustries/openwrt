@@ -22,21 +22,27 @@ err() {
 cpus=$(($(nproc) + 1))
 
 # Determine the action or show help text
-ACTION="$@"
+ACTION="${1:-}"
+shift
+if [ -n "${1:-}" ]
+then
+  ACTION="$ACTION $1"
+  shift
+fi
 if [ "$ACTION" = "" ]
 then
   echo "Usage: $0 <action>"
   echo ""
   echo "Possible actions:"
-  echo "   feeds update     Update all feeds"
-  echo "   feeds files      Update the local 'files' folder"
-  echo "   feeds install    Install all feed packages available"
-  echo "   feeds            Alias: feeds update, feeds files, feeds install"
-  echo "   config load      Apply 'prism.config' onto '.config'"
-  echo "   config save      Generate 'prism.config' from current '.config'"
-  echo "   config           Alias: config load, config save"
-  echo "   build            Perform packages download and compilation"
-  echo "   full build       Alias: feeds, config, build"
+  echo "   feeds update       Update all feeds"
+  echo "   feeds files        Update the local 'files' folder"
+  echo "   feeds install      Install all feed packages available"
+  echo "   feeds              Alias: feeds update, feeds files, feeds install"
+  echo "   config load [sdk]  Apply 'prism.config' onto '.config'"
+  echo "   config save        Generate 'prism.config' from current '.config'"
+  echo "   config             Alias: config load, config save"
+  echo "   build              Perform packages download and compilation"
+  echo "   full build         Alias: feeds, config, build"
   echo ""
   exit 1
 fi
@@ -124,23 +130,54 @@ fi
 # Expand 'prism.config' into the full regular '.config'
 if [ "$ACTION" = "config load" -o "$ACTION" = "config" -o "$ACTION" = "full build" ]
 then
-  out "3/5) Applying 'prism.config' to '.config'"
-  cp prism.config .config
+  if [ "x$@" = "xsdk" ]
+  then
+    _XCONFIG_EXPANDED=".config.prism.sdk"
+    _XCONFIG_COMPACT="prism.config.sdk"
+  else
+    _XCONFIG_EXPANDED=".config.prism"
+    _XCONFIG_COMPACT="prism.config"
+  fi
+  rm -f .config
+  ln -sf $_XCONFIG_EXPANDED .config
+  out "3/5) Applying '$_XCONFIG_COMPACT' to '.config'"
+  cat $_XCONFIG_COMPACT > .config
   make defconfig
 fi
 
-# At this point, '.config' must exist
-[ -e ".config" ] || err "Missing '.config', please run 'config load' next"
+# At this point, '.config' must exist and must be a symlink
+[ -L ".config" ] || err "Missing or invalid '.config', please run 'config load' next"
+case $(readlink .config) in
+  ".config.prism")      _XCONFIG_COMPACT="prism.config"; ;;
+  ".config.prism.sdk")  _XCONFIG_COMPACT="prism.config.sdk"; ;;
+  *) err "Invalid '.config', that is not what we expected"
+esac
 
 # Create the 'prism.config' shrinked config
 if [ "$ACTION" = "config save" -o "$ACTION" = "config" -o "$ACTION" = "full build" ]
 then
-  out "Saving current config onto 'prism.config'"
-  ./scripts/diffconfig.sh > "prism.config"
+  out "Saving current config onto '$_XCONFIG_COMPACT'"
+  ./scripts/diffconfig.sh > $_XCONFIG_COMPACT
+fi
+
+# Repack all expanded configs to their compact version
+if [ "$ACTION" = "config repack" ]
+then
+  _saved_config=$(readlink .config)
+
+  out "Repacking '.config.prism' onto 'prism.config'"
+  ln -sf .config.prism .config && make defconfig &&
+    ./scripts/diffconfig.sh > prism.config
+
+  out "Repacking '.config.prism.sdk' onto 'prism.config.sdk'"
+  ln -sf .config.prism.sdk .config && make defconfig &&
+    ./scripts/diffconfig.sh > prism.config.sdk
+
+  ln -sf $_saved_config .config
 fi
 
 # Verify that the files we have are the ones we expect
-_XCONFIG_VERSION=$(sed -ne 's/^CONFIG_VERSION_NUMBER="\([0-9.]\+\).*"/\1/p' .config)
+_XCONFIG_VERSION=$(sed -ne 's/^CONFIG_VERSION_NUMBER="\([0-9]\+\.[0-9]\+\).*"/\1/p' .config)
 _XFILES_VERSION=$(sed -ne 's/^\([0-9.]\+\).*/\1/p' files/etc/prism/prismfiles-version)
 [ "$_XFILES_VERSION" = "$_XCONFIG_VERSION" ] || \
   err "Local 'files' base version (\"$_XFILES_VERSION\")" \

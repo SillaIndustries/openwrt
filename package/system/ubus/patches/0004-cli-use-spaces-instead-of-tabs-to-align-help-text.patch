@@ -1,0 +1,135 @@
+From 30dd4f78e7ebc433f61ee9e47ec653741a1a0f06 Mon Sep 17 00:00:00 2001
+From: Giovanni Giacobbi <giovanni@giacobbi.net>
+Date: Wed, 21 Apr 2021 18:23:37 +0200
+Subject: [PATCH 4/4] cli: use spaces instead of tabs to align help text
+
+Due to the extra quote the alignment viewed in the editor can differ from the one resulting in the terminal.
+
+Signed-off-by: Giovanni Giacobbi <giovanni@giacobbi.net>
+(cherry picked from commit 983441316123487d54eda4632ac38f24db0f0a8f)
+---
+ cli.c                  | 28 ++++++++++-----------
+ tests/cram/test_ubus.t | 56 +++++++++++++++++++++---------------------
+ 2 files changed, 42 insertions(+), 42 deletions(-)
+
+diff --git a/cli.c b/cli.c
+index 528d325..bdc75d8 100644
+--- a/cli.c
++++ b/cli.c
+@@ -539,22 +539,22 @@ static int usage(const char *prog)
+ 	fprintf(stderr,
+ 		"Usage: %s [<options>] <command> [arguments...]\n"
+ 		"Options:\n"
+-		" -s <socket>:		Set the unix domain socket to connect to\n"
+-		" -t <timeout>:		Set the timeout (in seconds) for a command to complete\n"
+-		" -S:			Use simplified output (for scripts)\n"
+-		" -v:			More verbose output\n"
+-		" -m <type>:		(for monitor): include a specific message type\n"
+-		"			(can be used more than once)\n"
+-		" -M <r|t>		(for monitor): only capture received or transmitted traffic\n"
++		" -s <socket>:           Set the unix domain socket to connect to\n"
++		" -t <timeout>:          Set the timeout (in seconds) for a command to complete\n"
++		" -S:                    Use simplified output (for scripts)\n"
++		" -v:                    More verbose output\n"
++		" -m <type>:             (for monitor): include a specific message type\n"
++		"                        (can be used more than once)\n"
++		" -M <r|t>               (for monitor): only capture received or transmitted traffic\n"
+ 		"\n"
+ 		"Commands:\n"
+-		" - list [<path>]			List objects\n"
+-		" - call <path> <method> [<message>]	Call an object method\n"
+-		" - subscribe <path> [<path>...]	Subscribe to object(s) notifications\n"
+-		" - listen [<path>...]			Listen for events\n"
+-		" - send <type> [<message>]		Send an event\n"
+-		" - wait_for <object> [<object>...]	Wait for multiple objects to appear on ubus\n"
+-		" - monitor				Monitor ubus traffic\n"
++		" - list [<path>]                        List objects\n"
++		" - call <path> <method> [<message>]     Call an object method\n"
++		" - subscribe <path> [<path>...]         Subscribe to object(s) notifications\n"
++		" - listen [<path>...]                   Listen for events\n"
++		" - send <type> [<message>]              Send an event\n"
++		" - wait_for <object> [<object>...]      Wait for multiple objects to appear on ubus\n"
++		" - monitor                              Monitor ubus traffic\n"
+ 		"\n", prog);
+ 	return 1;
+ }
+diff --git a/tests/cram/test_ubus.t b/tests/cram/test_ubus.t
+index b4ea236..ece4877 100644
+--- a/tests/cram/test_ubus.t
++++ b/tests/cram/test_ubus.t
+@@ -8,44 +8,44 @@ check usage:
+   $ ubus
+   Usage: ubus [<options>] <command> [arguments...]
+   Options:
+-   -s <socket>:\t\tSet the unix domain socket to connect to (esc)
+-   -t <timeout>:\t\tSet the timeout (in seconds) for a command to complete (esc)
+-   -S:\t\t\tUse simplified output (for scripts) (esc)
+-   -v:\t\t\tMore verbose output (esc)
+-   -m <type>:\t\t(for monitor): include a specific message type (esc)
+-  \t\t\t(can be used more than once) (esc)
+-   -M <r|t>\t\t(for monitor): only capture received or transmitted traffic (esc)
++   -s <socket>:           Set the unix domain socket to connect to
++   -t <timeout>:          Set the timeout (in seconds) for a command to complete
++   -S:                    Use simplified output (for scripts)
++   -v:                    More verbose output
++   -m <type>:             (for monitor): include a specific message type
++                          (can be used more than once)
++   -M <r|t>               (for monitor): only capture received or transmitted traffic
+   
+   Commands:
+-   - list [<path>]\t\t\tList objects (esc)
+-   - call <path> <method> [<message>]\tCall an object method (esc)
+-   - subscribe <path> [<path>...]\tSubscribe to object(s) notifications (esc)
+-   - listen [<path>...]\t\t\tListen for events (esc)
+-   - send <type> [<message>]\t\tSend an event (esc)
+-   - wait_for <object> [<object>...]\tWait for multiple objects to appear on ubus (esc)
+-   - monitor\t\t\t\tMonitor ubus traffic (esc)
++   - list [<path>]                        List objects
++   - call <path> <method> [<message>]     Call an object method
++   - subscribe <path> [<path>...]         Subscribe to object(s) notifications
++   - listen [<path>...]                   Listen for events
++   - send <type> [<message>]              Send an event
++   - wait_for <object> [<object>...]      Wait for multiple objects to appear on ubus
++   - monitor                              Monitor ubus traffic
+   
+   [1]
+ 
+   $ ubus-san
+   Usage: ubus-san [<options>] <command> [arguments...]
+   Options:
+-   -s <socket>:\t\tSet the unix domain socket to connect to (esc)
+-   -t <timeout>:\t\tSet the timeout (in seconds) for a command to complete (esc)
+-   -S:\t\t\tUse simplified output (for scripts) (esc)
+-   -v:\t\t\tMore verbose output (esc)
+-   -m <type>:\t\t(for monitor): include a specific message type (esc)
+-  \t\t\t(can be used more than once) (esc)
+-   -M <r|t>\t\t(for monitor): only capture received or transmitted traffic (esc)
++   -s <socket>:           Set the unix domain socket to connect to
++   -t <timeout>:          Set the timeout (in seconds) for a command to complete
++   -S:                    Use simplified output (for scripts)
++   -v:                    More verbose output
++   -m <type>:             (for monitor): include a specific message type
++                          (can be used more than once)
++   -M <r|t>               (for monitor): only capture received or transmitted traffic
+   
+   Commands:
+-   - list [<path>]\t\t\tList objects (esc)
+-   - call <path> <method> [<message>]\tCall an object method (esc)
+-   - subscribe <path> [<path>...]\tSubscribe to object(s) notifications (esc)
+-   - listen [<path>...]\t\t\tListen for events (esc)
+-   - send <type> [<message>]\t\tSend an event (esc)
+-   - wait_for <object> [<object>...]\tWait for multiple objects to appear on ubus (esc)
+-   - monitor\t\t\t\tMonitor ubus traffic (esc)
++   - list [<path>]                        List objects
++   - call <path> <method> [<message>]     Call an object method
++   - subscribe <path> [<path>...]         Subscribe to object(s) notifications
++   - listen [<path>...]                   Listen for events
++   - send <type> [<message>]              Send an event
++   - wait_for <object> [<object>...]      Wait for multiple objects to appear on ubus
++   - monitor                              Monitor ubus traffic
+   
+   [1]
+ 
+-- 
+2.17.1
+
