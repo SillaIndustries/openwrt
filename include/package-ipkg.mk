@@ -248,7 +248,7 @@ $(_endef)
 	)
 
     ifneq ($$(KEEP_$(1)),)
-		@( \
+		( \
 			keepfiles=""; \
 			for x in $$(KEEP_$(1)); do \
 				[ -f "$$(IDIR_$(1))/$$$$x" ] || keepfiles="$$$${keepfiles:+$$$$keepfiles }$$$$x"; \

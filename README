@@ -5,7 +5,8 @@
           |__| W I R E L E S S   F R E E D O M
  -----------------------------------------------------
 
-This is the buildsystem for the OpenWrt Linux distribution.
+This is the buildsystem for the OpenWrt Linux distribution, preconfigured
+to build the system image for the Silla-Prism EVSE.
 
 To build your own firmware you need a Linux, BSD or MacOSX system (case
 sensitive filesystem required). Cygwin is unsupported because of the lack

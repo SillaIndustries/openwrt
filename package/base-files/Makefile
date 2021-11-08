@@ -47,19 +47,14 @@ define Package/base-files/conffiles
 /etc/config/
 /etc/config/network
 /etc/config/system
-/etc/crontabs/
 /etc/dropbear/
 /etc/ethers
 /etc/group
 /etc/hosts
 /etc/inittab
-/etc/iproute2/rt_protos
-/etc/iproute2/rt_tables
 /etc/passwd
 /etc/profile
-/etc/profile.d
 /etc/protocols
-/etc/rc.local
 /etc/services
 /etc/shadow
 /etc/shells
@@ -146,6 +141,10 @@ define Package/base-files/install
 		$(1)/etc/openwrt_release \
 		$(1)/etc/device_info \
 		$(1)/usr/lib/os-release
+
+	$(VERSION_SED_SCRIPT) \
+		$(1)/etc/prism/version \
+		$(1)/root/config/version
 
 	$(SED) "s#%PATH%#$(TARGET_INIT_PATH)#g" \
 		$(1)/sbin/hotplug-call \

@@ -1,0 +1,40 @@
+From 21b1ea39dd8eb98ee7322ab4837cbcb2e6ade458 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>
+Date: Wed, 5 Aug 2020 10:27:24 +0200
+Subject: [PATCH 2/4] tests: cram: fix usage test
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add new subscribe command help.
+
+Fixes: 59835ae530f5 ("cli: document usage of "subscribe" command")
+Signed-off-by: Petr Štetiar <ynezz@true.cz>
+(cherry picked from commit 13efd05c1bb611a3b30f53858fcd3a13589e08be)
+---
+ tests/cram/test_ubus.t | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tests/cram/test_ubus.t b/tests/cram/test_ubus.t
+index e4ba87f..b4ea236 100644
+--- a/tests/cram/test_ubus.t
++++ b/tests/cram/test_ubus.t
+@@ -19,6 +19,7 @@ check usage:
+   Commands:
+    - list [<path>]\t\t\tList objects (esc)
+    - call <path> <method> [<message>]\tCall an object method (esc)
++   - subscribe <path> [<path>...]\tSubscribe to object(s) notifications (esc)
+    - listen [<path>...]\t\t\tListen for events (esc)
+    - send <type> [<message>]\t\tSend an event (esc)
+    - wait_for <object> [<object>...]\tWait for multiple objects to appear on ubus (esc)
+@@ -40,6 +41,7 @@ check usage:
+   Commands:
+    - list [<path>]\t\t\tList objects (esc)
+    - call <path> <method> [<message>]\tCall an object method (esc)
++   - subscribe <path> [<path>...]\tSubscribe to object(s) notifications (esc)
+    - listen [<path>...]\t\t\tListen for events (esc)
+    - send <type> [<message>]\t\tSend an event (esc)
+    - wait_for <object> [<object>...]\tWait for multiple objects to appear on ubus (esc)
+-- 
+2.17.1
+

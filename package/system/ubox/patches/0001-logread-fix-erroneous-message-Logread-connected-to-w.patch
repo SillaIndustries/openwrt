@@ -1,0 +1,120 @@
+From 92b4174ec5c937ecf422492bc25c18f3799bd61b Mon Sep 17 00:00:00 2001
+From: Giovanni Giacobbi <giovanni@giacobbi.net>
+Date: Tue, 27 Jul 2021 15:08:12 +0200
+Subject: [PATCH] logread: fix erroneous message "Logread connected to" when
+ using udp
+
+When streaming the syslog messages via udp, the socket connection always succeeds by definition, but it can still fail to send. In such case,
+the syslog keep repeating the following two messages:
+
+    failed to send log data to ip:port via udp
+    Logread connected to ip:port
+
+With this change, only one initial message "Logread streaming to..." is logged.
+
+Also fixed capital letter for "failed to send" message.
+
+Signed-off-by: Giovanni Giacobbi <giovanni@giacobbi.net>
+---
+ log/logread.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/log/logread.c b/log/logread.c
+index e47541a..3401e83 100644
+--- a/log/logread.c
++++ b/log/logread.c
+@@ -68,41 +68,47 @@ static int log_timestamp;
+ static int logd_conn_tries = LOGD_CONNECT_RETRY;
+ 
+ static const char* getcodetext(int value, CODE *codetable) {
+ 	CODE *i;
+ 
+ 	if (value >= 0)
+ 		for (i = codetable; i->c_val != -1; i++)
+ 			if (i->c_val == value)
+ 				return (i->c_name);
+ 	return "<unknown>";
+ };
+ 
+ static void log_handle_reconnect(struct uloop_timeout *timeout)
+ {
+ 	sender.fd = usock((log_udp) ? (USOCK_UDP) : (USOCK_TCP), log_ip, log_port);
+ 	if (sender.fd < 0) {
+ 		fprintf(stderr, "failed to connect: %m\n");
+ 		uloop_timeout_set(&retry, 1000);
+ 	} else {
+ 		uloop_fd_add(&sender, ULOOP_READ);
+-		syslog(LOG_INFO, "Logread connected to %s:%s\n", log_ip, log_port);
++		if (!log_udp) {
++			syslog(LOG_INFO, "Logread connected to %s:%s via tcp\n", log_ip, log_port);
++		}
++		else if (log_udp == 1) {
++			syslog(LOG_INFO, "Logread streaming to %s:%s via udp\n", log_ip, log_port);
++			log_udp = 2;
++		}
+ 	}
+ }
+ 
+ static void log_handle_fd(struct uloop_fd *u, unsigned int events)
+ {
+ 	if (u->eof) {
+ 		uloop_fd_delete(u);
+ 		close(sender.fd);
+ 		sender.fd = -1;
+ 		uloop_timeout_set(&retry, 1000);
+ 	}
+ }
+ 
+ static int log_notify(struct blob_attr *msg)
+ {
+ 	struct blob_attr *tb[__LOG_MAX];
+ 	struct stat s;
+ 	char buf[LOG_LINE_SIZE + 128];
+ 	char buf_ts[32];
+ 	uint32_t p;
+@@ -160,41 +166,41 @@ static int log_notify(struct blob_attr *msg)
+ 			strncat(buf, hostname, sizeof(buf) - strlen(buf) - 1);
+ 			strncat(buf, " ", sizeof(buf) - strlen(buf) - 1);
+ 		}
+ 		if (log_prefix) {
+ 			strncat(buf, log_prefix, sizeof(buf) - strlen(buf) - 1);
+ 			strncat(buf, ": ", sizeof(buf) - strlen(buf) - 1);
+ 		}
+ 		if (blobmsg_get_u32(tb[LOG_SOURCE]) == SOURCE_KLOG)
+ 			strncat(buf, "kernel: ", sizeof(buf) - strlen(buf) - 1);
+ 		strncat(buf, m, sizeof(buf) - strlen(buf) - 1);
+ 		if (log_udp)
+ 			err = write(sender.fd, buf, strlen(buf));
+ 		else {
+ 			size_t buflen = strlen(buf);
+ 			if (!log_trailer_null)
+ 				buf[buflen] = '\n';
+ 			err = send(sender.fd, buf, buflen + 1, 0);
+ 		}
+ 
+ 		if (err < 0) {
+-			syslog(LOG_INFO, "failed to send log data to %s:%s via %s\n",
++			syslog(LOG_INFO, "Failed to send log data to %s:%s via %s\n",
+ 				log_ip, log_port, (log_udp) ? ("udp") : ("tcp"));
+ 			uloop_fd_delete(&sender);
+ 			close(sender.fd);
+ 			sender.fd = -1;
+ 			uloop_timeout_set(&retry, 1000);
+ 		}
+ 	} else {
+ 		snprintf(buf, sizeof(buf), "%s %s%s.%s%s %s\n",
+ 			c, log_timestamp ? buf_ts : "",
+ 			getcodetext(LOG_FAC(p) << 3, facilitynames),
+ 			getcodetext(LOG_PRI(p), prioritynames),
+ 			(blobmsg_get_u32(tb[LOG_SOURCE])) ? ("") : (" kernel:"), m);
+ 		ret = write(sender.fd, buf, strlen(buf));
+ 	}
+ 
+ 	if (log_type == LOG_FILE)
+ 		fsync(sender.fd);
+ 
+ 	return ret;
+ }
+-- 
+2.17.2
+

@@ -220,7 +220,7 @@ class DownloadGitHubTarball(object):
 
      - GitHub archives do not contain source codes for submodules.
 
-     - GitHub archives seem to respect .gitattributes and ignore pathes with
+     - GitHub archives seem to respect .gitattributes and ignore paths with
        export-ignore attributes.
 
     For the first two issues, the method will fail loudly to allow fallback to
