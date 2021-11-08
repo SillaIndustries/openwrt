@@ -34,6 +34,7 @@ then
   echo "Usage: $0 <action>"
   echo ""
   echo "Possible actions:"
+  echo "   set version <ver>  Sets the firmware release version"
   echo "   feeds update       Update all feeds"
   echo "   feeds files        Update the local 'files' folder"
   echo "   feeds install      Install all feed packages available"
@@ -70,6 +71,40 @@ else
   then
     out " !!! WARNING !!! Wrong 'key-build', generated packages won't be official!"
   fi
+fi
+
+##############################################################################
+# Applies the version to the config files and exits
+
+if [ "$ACTION" = "set version" ]
+then
+  NEW_VERSION=${1:-}
+  if [ -z "$NEW_VERSION" ]
+  then
+    echo "Usage: $0 set version <ver>" >&2
+    echo "" >&2
+    echo "Current version:" $(sed -n -e 's/^CONFIG_VERSION_NUMBER="\(.*\)"/\1/p' .config)
+    exit 1
+  fi
+
+  # Validates versions and extracts the prefix (major.minor) in one shot!
+  NEW_VER_PREFIX=$(echo $NEW_VERSION | sed -n -e 's/^\([0-9]\+\.[0-9]\+\)\.\([0-9]\+\)\(-.\+\)\?$/\1/p')
+  [ -n "$NEW_VER_PREFIX" ] || err "Invalid version number syntax (major.minor.patch[-variant])!"
+
+  NEW_VER_FULL="$NEW_VERSION"
+  sed -i -e '
+s/^\(CONFIG_VERSION_NUMBER="\).*"/\1'$NEW_VER_FULL'"/;
+s/^\(CONFIG_VERSION_REPO=".*\/prism-\).*"/\1'$NEW_VER_PREFIX'"/;
+' .config.prism prism.config
+
+  NEW_VER_FULL="$NEW_VERSION-sdk"
+  sed -i -e '
+s/^\(CONFIG_VERSION_NUMBER="\).*"/\1'$NEW_VER_FULL'"/;
+s/^\(CONFIG_VERSION_REPO=".*\/prism-\).*"/\1'$NEW_VER_PREFIX'"/;
+' .config.prism.sdk prism.config.sdk
+
+  out "Version updated to $NEW_VERSION."
+  exit 0
 fi
 
 ##############################################################################
