@@ -23,7 +23,7 @@ cpus=$(($(nproc) + 1))
 
 # Determine the action or show help text
 ACTION="${1:-}"
-shift
+shift || :
 if [ -n "${1:-}" ]
 then
   ACTION="$ACTION $1"
