@@ -67,7 +67,7 @@ endef
 
 define Package/libubus/install
 	$(INSTALL_DIR) $(1)/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libubus.so.* $(1)/lib/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libubus.so* $(1)/lib/
 endef
 
 define Package/libubus-lua/install
