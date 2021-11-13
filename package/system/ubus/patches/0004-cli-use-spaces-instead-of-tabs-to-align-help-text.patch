@@ -1,4 +1,4 @@
-From 30dd4f78e7ebc433f61ee9e47ec653741a1a0f06 Mon Sep 17 00:00:00 2001
+From 0879dc621e5cbf1dfb9473f839dfecb710399fd2 Mon Sep 17 00:00:00 2001
 From: Giovanni Giacobbi <giovanni@giacobbi.net>
 Date: Wed, 21 Apr 2021 18:23:37 +0200
 Subject: [PATCH 4/4] cli: use spaces instead of tabs to align help text
@@ -6,14 +6,11 @@ Subject: [PATCH 4/4] cli: use spaces instead of tabs to align help text
 Due to the extra quote the alignment viewed in the editor can differ from the one resulting in the terminal.
 
 Signed-off-by: Giovanni Giacobbi <giovanni@giacobbi.net>
-(cherry picked from commit 983441316123487d54eda4632ac38f24db0f0a8f)
 ---
  cli.c                  | 28 ++++++++++-----------
  tests/cram/test_ubus.t | 56 +++++++++++++++++++++---------------------
  2 files changed, 42 insertions(+), 42 deletions(-)
 
-diff --git a/cli.c b/cli.c
-index 528d325..bdc75d8 100644
 --- a/cli.c
 +++ b/cli.c
 @@ -539,22 +539,22 @@ static int usage(const char *prog)
@@ -53,8 +50,6 @@ index 528d325..bdc75d8 100644
  		"\n", prog);
  	return 1;
  }
-diff --git a/tests/cram/test_ubus.t b/tests/cram/test_ubus.t
-index b4ea236..ece4877 100644
 --- a/tests/cram/test_ubus.t
 +++ b/tests/cram/test_ubus.t
 @@ -8,44 +8,44 @@ check usage:
@@ -130,6 +125,3 @@ index b4ea236..ece4877 100644
    
    [1]
  
--- 
-2.17.1
-

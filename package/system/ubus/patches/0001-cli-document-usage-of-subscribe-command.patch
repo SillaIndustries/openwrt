@@ -1,4 +1,4 @@
-From 0b5a979c4d2168452fd3c51e79da08b7e9b55b29 Mon Sep 17 00:00:00 2001
+From 05cac74a57cd480543f16a3d68ce88f739ad80de Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
 Date: Wed, 29 Jul 2020 10:17:18 +0200
 Subject: [PATCH 1/4] cli: document usage of "subscribe" command
@@ -17,8 +17,6 @@ Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
  cli.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/cli.c b/cli.c
-index f566279..81591ec 100644
 --- a/cli.c
 +++ b/cli.c
 @@ -549,6 +549,7 @@ static int usage(const char *prog)
@@ -29,6 +27,3 @@ index f566279..81591ec 100644
  		" - listen [<path>...]			Listen for events\n"
  		" - send <type> [<message>]		Send an event\n"
  		" - wait_for <object> [<object>...]	Wait for multiple objects to appear on ubus\n"
--- 
-2.17.1
-

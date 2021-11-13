@@ -1,4 +1,4 @@
-From 21b1ea39dd8eb98ee7322ab4837cbcb2e6ade458 Mon Sep 17 00:00:00 2001
+From de5332edf107d3289f1bb7330bab8505882de517 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>
 Date: Wed, 5 Aug 2020 10:27:24 +0200
 Subject: [PATCH 2/4] tests: cram: fix usage test
@@ -15,8 +15,6 @@ Signed-off-by: Petr Štetiar <ynezz@true.cz>
  tests/cram/test_ubus.t | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/tests/cram/test_ubus.t b/tests/cram/test_ubus.t
-index e4ba87f..b4ea236 100644
 --- a/tests/cram/test_ubus.t
 +++ b/tests/cram/test_ubus.t
 @@ -19,6 +19,7 @@ check usage:
@@ -35,6 +33,3 @@ index e4ba87f..b4ea236 100644
     - listen [<path>...]\t\t\tListen for events (esc)
     - send <type> [<message>]\t\tSend an event (esc)
     - wait_for <object> [<object>...]\tWait for multiple objects to appear on ubus (esc)
--- 
-2.17.1
-
