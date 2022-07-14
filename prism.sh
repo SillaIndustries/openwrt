@@ -212,11 +212,11 @@ then
 fi
 
 # Verify that the files we have are the ones we expect
-_XCONFIG_VERSION=$(sed -ne 's/^CONFIG_VERSION_NUMBER="\([0-9]\+\.[0-9]\+\).*"/\1/p' .config)
-_XFILES_VERSION=$(sed -ne 's/^\([0-9.]\+\).*/\1/p' files/etc/prism/prismfiles-version)
-[ "$_XFILES_VERSION" = "$_XCONFIG_VERSION" ] || \
-  err "Local 'files' base version (\"$_XFILES_VERSION\")" \
-      "mismatches config base version (\"$_XCONFIG_VERSION\")" >&2
+# _XCONFIG_VERSION=$(sed -ne 's/^CONFIG_VERSION_NUMBER="\([0-9]\+\.[0-9]\+\).*"/\1/p' .config)
+# _XFILES_VERSION=$(sed -ne 's/^\([0-9.]\+\).*/\1/p' files/etc/prism/prismfiles-version)
+# [ "$_XFILES_VERSION" = "$_XCONFIG_VERSION" ] || \
+#   err "Local 'files' base version (\"$_XFILES_VERSION\")" \
+#       "mismatches config base version (\"$_XCONFIG_VERSION\")" >&2
 
 ##############################################################################
 
