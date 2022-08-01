@@ -219,14 +219,24 @@ fi
 #       "mismatches config base version (\"$_XCONFIG_VERSION\")" >&2
 
 ##############################################################################
-
+RETRY_COUNTER=0
 if [ "$ACTION" = "build" -o "$ACTION" = "full build" ]
 then
   out "4/5) Downloading packages"
   make download
-
   out "5/5) Starting build process using $cpus cpu(s)..."
-  make -j$cpus world
+  while [ $RETRY_COUNTER -lt 3 ]
+  do
+    make -j$cpus world
+    if [ $? -eq 0 ]
+    then
+      break
+    fi
+    ((RETRY_COUNTER++))
+    out "Make world failed... Retry with 1 core!"
+    cpus="1 V=s"
+  done
+  
 fi
 
 ##############################################################################
