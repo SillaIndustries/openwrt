@@ -225,7 +225,11 @@ then
   out "4/5) Downloading packages"
   make download
   out "5/5) Starting build process"
+  set +e
   make world
+  if [ $? -ne 0 ]; then
+    make -j1 V=s world
+  fi
   
 fi
 
