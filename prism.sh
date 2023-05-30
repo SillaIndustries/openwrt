@@ -228,6 +228,7 @@ then
   set +e
   make world
   if [ $? -ne 0 ]; then
+    set -e
     make -j1 V=s world
   fi
   
