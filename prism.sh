@@ -224,18 +224,13 @@ if [ "$ACTION" = "build" -o "$ACTION" = "full build" ]
 then
   out "4/5) Downloading packages"
   make download
-  out "5/5) Starting build process using $cpus cpu(s)..."
-  while [ $RETRY_COUNTER -lt 3 ]
-  do
-    make -j$cpus world
-    if [ $? -eq 0 ]
-    then
-      break
-    fi
-    ((RETRY_COUNTER++))
-    out "Make world failed... Retry with 1 core!"
-    cpus="1 V=s"
-  done
+  out "5/5) Starting build process"
+  set +e
+  make world
+  if [ $? -ne 0 ]; then
+    set -e
+    make -j1 V=s world
+  fi
   
 fi
 
