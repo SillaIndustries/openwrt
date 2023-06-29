@@ -240,6 +240,7 @@
 	atecc508a@c0 {
 		compatible = "atmel,atecc508a";
 		reg = <0x60>;
+		status = "okay";
 	};
 };
 
