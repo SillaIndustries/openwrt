@@ -226,7 +226,7 @@ then
   make download
   out "5/5) Starting build process"
   set +e
-  make -j 41 world
+  make world
   if [ $? -ne 0 ]; then
     set -e
     make -j1 V=s world
