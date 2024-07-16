@@ -7,19 +7,16 @@ set -eu
 umask 0022
 
 out() {
-  echo -en "\n\n\n\e[36;1m[+] $@\e[m\n\n"
+  echo -en "\n\n\n\e[36;1m[+] $*\e[m\n\n"
   sleep 1
 }
 err() {
-  echo -en "\n\n\n\e[31;1m[!] Error: $@\e[m\n\n"
+  echo -en "\n\n\n\e[31;1m[!] Error: $*\e[m\n\n"
   exit 1
 }
 
 # Check that we are in the right directory
 [ -e "feeds.conf.default" ] || err "You must run this script from the correct directory!"
-
-# Acquire the available cpus for parallel building
-cpus=$(($(nproc) + 1))
 
 # Determine the action or show help text
 ACTION="${1:-}"
@@ -34,16 +31,24 @@ then
   echo "Usage: $0 <action>"
   echo ""
   echo "Possible actions:"
+
   echo "   set version <ver>  Sets the firmware release version"
+
   echo "   feeds update       Update all feeds"
   echo "   feeds files        Update the local 'files' folder"
   echo "   feeds install      Install all feed packages available"
   echo "   feeds              Alias: feeds update, feeds files, feeds install"
+
   echo "   config load [sdk]  Apply 'prism.config' onto '.config'"
   echo "   config save        Generate 'prism.config' from current '.config'"
   echo "   config             Alias: config load, config save"
-  echo "   build              Perform packages download and compilation"
+
+  echo "   build download     Perform packages download"
+  echo "   build compile      Perform packages compilation"
+  echo "   build              Alias: build download, build compile"
+
   echo "   full build         Alias: feeds, config, build"
+
   echo ""
   exit 1
 fi
@@ -83,24 +88,24 @@ then
   then
     echo "Usage: $0 set version <ver>" >&2
     echo "" >&2
-    echo "Current version:" $(sed -n -e 's/^CONFIG_VERSION_NUMBER="\(.*\)"/\1/p' .config)
+    echo "Current version: $(sed -n -e 's/^CONFIG_VERSION_NUMBER="\(.*\)"/\1/p' .config)"
     exit 1
   fi
 
   # Validates versions and extracts the prefix (major.minor) in one shot!
-  NEW_VER_PREFIX=$(echo $NEW_VERSION | sed -n -e 's/^\([0-9]\+\.[0-9]\+\)\.\([0-9]\+\)\(-.\+\)\?$/\1/p')
+  NEW_VER_PREFIX=$(echo "$NEW_VERSION" | sed -n -e 's/^\([0-9]\+\.[0-9]\+\)\.\([0-9]\+\)\(-.\+\)\?$/\1/p')
   [ -n "$NEW_VER_PREFIX" ] || err "Invalid version number syntax (major.minor.patch[-variant])!"
 
   NEW_VER_FULL="$NEW_VERSION"
   sed -i -e '
-s/^\(CONFIG_VERSION_NUMBER="\).*"/\1'$NEW_VER_FULL'"/;
-s/^\(CONFIG_VERSION_REPO=".*\/prism-\).*"/\1'$NEW_VER_PREFIX'"/;
+s/^\(CONFIG_VERSION_NUMBER="\).*"/\1'"$NEW_VER_FULL"'"/;
+s/^\(CONFIG_VERSION_REPO=".*\/prism-\).*"/\1'"$NEW_VER_PREFIX"'"/;
 ' .config.prism prism.config
 
   NEW_VER_FULL="$NEW_VERSION-sdk"
   sed -i -e '
-s/^\(CONFIG_VERSION_NUMBER="\).*"/\1'$NEW_VER_FULL'"/;
-s/^\(CONFIG_VERSION_REPO=".*\/prism-\).*"/\1'$NEW_VER_PREFIX'"/;
+s/^\(CONFIG_VERSION_NUMBER="\).*"/\1'"$NEW_VER_FULL"'"/;
+s/^\(CONFIG_VERSION_REPO=".*\/prism-\).*"/\1'"$NEW_VER_PREFIX"'"/;
 ' .config.prism.sdk prism.config.sdk
 
   out "Version updated to $NEW_VERSION."
@@ -110,7 +115,7 @@ fi
 ##############################################################################
 # Updating the feeds creates all the data needed in 'feeds/<feedname>'
 
-if [ "$ACTION" = "feeds update" -o "$ACTION" = "feeds" -o "$ACTION" = "full build" ]
+if [ "$ACTION" = "feeds update" ] || [ "$ACTION" = "feeds" ] || [ "$ACTION" = "full build" ]
 then
   out "1/5) Updating feeds"
   ./scripts/feeds update
@@ -121,7 +126,7 @@ fi
 
 ##############################################################################
 
-if [ "$ACTION" = "feeds files" -o "$ACTION" = "feeds" -o "$ACTION" = "full build" ]
+if [ "$ACTION" = "feeds files" ] || [ "$ACTION" = "feeds" ] || [ "$ACTION" = "full build" ]
 then
   _FILES_REPO_URL=$(cat feeds/prism/prism/prism-files/REPO_URL)
   _FILES_REPO_VERSION=$(cat feeds/prism/prism/prism-files/REPO_VERSION)
@@ -151,7 +156,7 @@ fi
 ##############################################################################
 # Installing the feeds creates symlinks under 'package/feeds/<feed>/<packagename>'
 
-if [ "$ACTION" = "feeds install" -o "$ACTION" = "feeds" -o "$ACTION" = "full build" ]
+if [ "$ACTION" = "feeds install" ] || [ "$ACTION" = "feeds" ] || [ "$ACTION" = "full build" ]
 then
   out "2/5) Installing feeds"
   ./scripts/feeds install -a
@@ -163,9 +168,9 @@ fi
 ##############################################################################
 
 # Expand 'prism.config' into the full regular '.config'
-if [ "$ACTION" = "config load" -o "$ACTION" = "config" -o "$ACTION" = "full build" ]
+if [ "$ACTION" = "config load" ] || [ "$ACTION" = "config" ] || [ "$ACTION" = "full build" ]
 then
-  if [ "x$@" = "xsdk" ]
+  if [ "x$*" = "xsdk" ]
   then
     _XCONFIG_EXPANDED=".config.prism.sdk"
     _XCONFIG_COMPACT="prism.config.sdk"
@@ -189,7 +194,7 @@ case $(readlink .config) in
 esac
 
 # Create the 'prism.config' shrinked config
-if [ "$ACTION" = "config save" -o "$ACTION" = "config" -o "$ACTION" = "full build" ]
+if [ "$ACTION" = "config save" ] || [ "$ACTION" = "config" ] || [ "$ACTION" = "full build" ]
 then
   out "Saving current config onto '$_XCONFIG_COMPACT'"
   ./scripts/diffconfig.sh > $_XCONFIG_COMPACT
@@ -208,7 +213,7 @@ then
   ln -sf .config.prism.sdk .config && make defconfig &&
     ./scripts/diffconfig.sh > prism.config.sdk
 
-  ln -sf $_saved_config .config
+  ln -sf "$_saved_config" .config
 fi
 
 # Verify that the files we have are the ones we expect
@@ -219,15 +224,19 @@ fi
 #       "mismatches config base version (\"$_XCONFIG_VERSION\")" >&2
 
 ##############################################################################
-RETRY_COUNTER=0
-if [ "$ACTION" = "build" -o "$ACTION" = "full build" ]
+if [ "$ACTION" = "build download" ] || [ "$ACTION" == "build" ] || [ "$ACTION" = "full build" ]
 then
   out "4/5) Downloading packages"
   make download
+fi
+
+##############################################################################
+if [ "$ACTION" = "build compile" ] || [ "$ACTION" == "build" ] || [ "$ACTION" = "full build" ]
+then
   out "5/5) Starting build process"
+
   set +e
-  make world
-  if [ $? -ne 0 ]; then
+  if ! make "-j${MAKE_J-1}" world; then
     set -e
     make -j1 V=s world
   fi
