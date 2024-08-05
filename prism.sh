@@ -235,9 +235,9 @@ if [ "$ACTION" = "build compile" ] || [ "$ACTION" == "build" ] || [ "$ACTION" = 
 then
   out "5/5) Starting build process"
 
-  set +e
+  set -e
   if ! make "-j${MAKE_J-1}" world; then
-    set -e
+    echo "Error detected: start debugging..."
     make -j1 V=s world
   fi
   
